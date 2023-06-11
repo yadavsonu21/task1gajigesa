@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Chat container styles */
+        #chat-container {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        /* Chat message styles */
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            color: ;
+        }
+
+        .bot-message {
+            color: blue;
+        }
+
+
+    </style>
+</head>
+<body>
+    <h1> ****Chatbot for GajiGesa**** </h1>
+    <form id="chat-form" method="POST">
+        {% csrf_token %}
+        <a href='/refresh'><h2>Clear Chat History</h2></a>
+        <p>As of now to clear previous chat context click on Clear Chat History</p>
+        <input type="text" id="chat-input" name="input" style="width:500px" placeholder="What do you want to chat about! ">
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="chat-container"></div>
+
+    <script>
+    $(document).ready(function() {
+        // Get the CSRF token from the cookie
+        var csrftoken = getCookie('csrftoken');
+
+        // Function to retrieve the CSRF cookie value
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        $("#chat-form").on("submit", function(e) {
+            e.preventDefault();
+
+            var message = $("#chat-input").val();
+            $("#chat-input").val("");  // Clear the input field
+
+            $.ajax({
+                url: "/",
+                type: "POST",
+                data: { "input": message },
+                dataType: "json",
+                headers: { "X-CSRFToken": csrftoken },  // Include the CSRF token in the headers
+                success: function(response) {
+                    var botResponse = response.response;
+                    // Display the user's message
+                    $("#chat-container").append('<div class="message user-message"><strong>You: </strong>' + message + '</div>');
+                    // Display the bot's response
+                    $("#chat-container").append('<div class="message bot-message"><strong>GajiGesaBot: </strong>' + botResponse.content + '</div>');
+                    // Scroll to the bottom of the chat container
+                    $("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error, if any
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
