@@ -1,5 +1,5 @@
 # task1gajigesa
-<h5> Don't forgot to replace "YOUR-API-KEY" with your openai api key in <u>setting.py</u> file <h2>
+<h5> Don't forgot to replace "YOUR-API-KEY" with your openai api key in <u>views.py</u> file into base app folder <h2>
 
 to run this code first go into root folderof the project 
 then run the following - 
